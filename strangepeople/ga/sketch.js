@@ -2,8 +2,9 @@ const POOL = '!@#$%^&*()_+~`|}{[]\:;?><,./-=0123456789abcdefghijklmnopqrstuvwxyz
 const TARGET = 'Strange people doing strange things with software.'
 
 class GeneticAlgorithm {
-	constructor(target, populationSize) {
+	constructor(target, populationSize, mutationRate) {
 		this.generation = 0;
+		this.mutationRate = mutationRate;
 		this.populationSize = populationSize;
 		this.population = [];
 		this.createInitialPopulation();
@@ -45,9 +46,24 @@ class GeneticAlgorithm {
 	buildMatingPool(populationFitness) {
 		let matingPool = [];
 
-		for(const [index, fitness] of populationFitness) {
+		for(const [index, fitness] of populationFitness.entries()) {
 			for(let i=0; i<fitness; i++) {
 				matingPool.push(index);
+			}
+		}
+
+		return matingPool;
+	}
+
+	mutate() {
+		let roll;
+
+		for(let individual of this.population) {
+			for(let i=0; i<individual.length; i++) {
+				roll = random();
+				if(roll < this.mutationRate) {
+					individual[i] = POOL.charAt(random(0, POOL.length));
+				}
 			}
 		}
 	}
@@ -70,8 +86,10 @@ function randomColor() {
 
 function setup() {
 	createCanvas(windowWidth, windowHeight);
-
-	ga = new GeneticAlgorithm(TARGET, 100);
+	ga = new GeneticAlgorithm(TARGET, 100, 0.01);
+	ga.mutate();
+	let fit = ga.computeFitness();
+	ga.buildMatingPool(fit.populationFitness);
 }
 
 function draw() {

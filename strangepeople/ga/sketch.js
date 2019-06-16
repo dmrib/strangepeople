@@ -1,5 +1,7 @@
-const POOL = '!@#$%^&*()_+~`|}{[]\:;?><,./-=0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const TARGET = 'Strange people doing strange things with software.'
+const POOL = 'ABCDEFGHIJKLMNOPQRSTUVXWYZ ';
+const POPULATION_SIZE = 1500;
+const MUTATION_RATE = 0.005;
+const TARGET = 'PEOPLE DOING STRANGE THINGS WITH SOFTWARE'
 
 class GeneticAlgorithm {
 	constructor(target, populationSize, mutationRate) {
@@ -68,6 +70,37 @@ class GeneticAlgorithm {
 		}
 	}
 
+	mate(populationFitness) {
+		const matingPool = this.buildMatingPool(populationFitness);
+
+		let nextPopulation = [];
+
+		for(let i=0; i<this.populationSize; i++) {
+			let father = this.population[matingPool[int(random(0, matingPool.length))]];
+			let mother = this.population[matingPool[int(random(0, matingPool.length))]];
+			let child = this.crossover(father, mother);
+
+			nextPopulation.push(child);
+		}
+
+		this.population = nextPopulation;
+	}
+
+	crossover(father, mother) {
+		let child = [];
+		for(let i=0; i<father.length; i++) {
+			let roll = random();
+			if(roll < 0.5) {
+				child.push(father[i]);
+			}
+			else {
+				child.push(mother[i]);
+			}
+		}
+
+		return child;
+	}
+
 	stringifyPopulation() {
 		let formated = '';
 		for(let individual of this.population) {
@@ -79,6 +112,7 @@ class GeneticAlgorithm {
 }
 
 let ga;
+let fit;
 
 function randomColor() {
 	return [random(0, 255), random(0, 255), random(0, 255)];
@@ -86,33 +120,36 @@ function randomColor() {
 
 function setup() {
 	createCanvas(windowWidth, windowHeight);
-	ga = new GeneticAlgorithm(TARGET, 100, 0.01);
-	ga.mutate();
-	let fit = ga.computeFitness();
-	ga.buildMatingPool(fit.populationFitness);
+	ga = new GeneticAlgorithm(TARGET, POPULATION_SIZE, MUTATION_RATE);
 }
 
 function draw() {
+	fit = ga.computeFitness();
+	if(fit.bestFitness < TARGET.length) {
+		ga.generation++;
+		ga.mutate();
+		ga.mate(fit.populationFitness)
+	}
+
 	background(random(10, 25));
 
 	fill(...randomColor());
 	textFont('Gloria Hallelujah', 20);
-	text(ga.stringifyPopulation(), windowWidth*0.6, 100, windowWidth*0.6, windowHeight-200);
+	text(ga.stringifyPopulation(), windowWidth*0.6, 20, windowWidth*0.6, windowHeight - 20);
 
-	let fit = ga.computeFitness()
 	let bestPhrase = ga.population[fit.bestFitnesssPosition].join('')
-	bestPhrase = bestPhrase.slice(0, 15) + '\n' +
-				 bestPhrase.slice(15, 21) + '\n' +
-				 bestPhrase.slice(21, 36) + '\n' +
-				 bestPhrase.slice(36, bestPhrase.length);
+	bestPhrase = bestPhrase.slice(0, 7) + '\n' +
+				 bestPhrase.slice(7, 13) + '\n' +
+				 bestPhrase.slice(13, 28) + '\n' +
+				 bestPhrase.slice(28, bestPhrase.length);
 
 	fill(...randomColor());
 	textFont('Indie Flower', 100);
-	text(bestPhrase, 20, windowHeight*0.1, windowWidth * 0.3, windowHeight * 0.6);
+	text(bestPhrase, 20, windowHeight*0.1, windowWidth, windowHeight);
 
 	fill(...randomColor());
 	textFont('Indie Flower', 30);
 	text(`Generation: ${ga.generation}`, 20, windowHeight*0.76, windowWidth * 0.3, windowHeight * 0.7)
 	text(`Best fitness: ${fit.bestFitness}`, 20, windowHeight*0.80, windowWidth * 0.3, windowHeight * 0.7);
-	text(`Average fitness: ${100*(fit.populationFitness.reduce(( p, c )=> p + c, 0) / fit.populationFitness.length)/TARGET.length}%`, 20, windowHeight*0.84, windowWidth * 0.3, windowHeight * 0.7);
+	text(`Average fitness: ${(100*(fit.populationFitness.reduce(( p, c )=> p + c, 0) / fit.populationFitness.length)/TARGET.length).toFixed(2)}%`, 20, windowHeight*0.84, windowWidth * 0.3, windowHeight * 0.7);
 }

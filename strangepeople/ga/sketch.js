@@ -17,6 +17,15 @@ class GeneticAlgorithm {
 			this.population.push(individual);
 		}
 	}
+
+	stringifyPopulation() {
+		let formated = '';
+		for(let individual of this.population) {
+			let word = individual.join('');
+			formated += word + '\n';
+		}
+		return formated;
+	}
 }
 
 let ga;
@@ -28,5 +37,6 @@ function setup() {
 }
 
 function draw() {
+	background(236, 208, 120);
 
 }

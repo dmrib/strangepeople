@@ -116,10 +116,15 @@ let fit;
 let capturer;
 let btn;
 let counter = 1;
+let img;
 
 function randomColor() {
 	return [random(0, 255), random(0, 255), random(0, 255)];
 }
+
+function preload() {
+	img = loadImage('assets/darwin.jpg');
+  }
 
 function setup() {
 	frameRate(15);
@@ -140,6 +145,7 @@ function draw() {
 	}
 
 	background(25);
+	image(img, windowWidth / 4, windowHeight / 1.5, img.width / 2.5, img.height / 2.5);
 
 	fill(...randomColor());
 	textFont('Gloria Hallelujah', 20);

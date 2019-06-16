@@ -38,5 +38,7 @@ function setup() {
 
 function draw() {
 	background(236, 208, 120);
-
+	fill(217,91,67);
+	textFont('Gloria Hallelujah', 20);
+	text(ga.stringifyPopulation(), windowWidth*0.6, 100, windowWidth*0.6, windowHeight-200);
 }

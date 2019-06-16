@@ -42,6 +42,16 @@ class GeneticAlgorithm {
 		return {populationFitness, bestFitness, bestFitnesssPosition};
 	}
 
+	buildMatingPool(populationFitness) {
+		let matingPool = [];
+
+		for(const [index, fitness] of populationFitness) {
+			for(let i=0; i<fitness; i++) {
+				matingPool.push(index);
+			}
+		}
+	}
+
 	stringifyPopulation() {
 		let formated = '';
 		for(let individual of this.population) {
@@ -54,6 +64,10 @@ class GeneticAlgorithm {
 
 let ga;
 
+function randomColor() {
+	return [random(0, 255), random(0, 255), random(0, 255)];
+}
+
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 
@@ -61,8 +75,9 @@ function setup() {
 }
 
 function draw() {
-	background(236, 208, 120);
-	fill(217, 91, 67);
+	background(random(10, 25));
+
+	fill(...randomColor());
 	textFont('Gloria Hallelujah', 20);
 	text(ga.stringifyPopulation(), windowWidth*0.6, 100, windowWidth*0.6, windowHeight-200);
 
@@ -73,15 +88,13 @@ function draw() {
 				 bestPhrase.slice(21, 36) + '\n' +
 				 bestPhrase.slice(36, bestPhrase.length);
 
-
-	fill(83, 119, 122);
+	fill(...randomColor());
 	textFont('Indie Flower', 100);
 	text(bestPhrase, 20, windowHeight*0.1, windowWidth * 0.3, windowHeight * 0.6);
 
-	fill(84, 36, 55);
+	fill(...randomColor());
 	textFont('Indie Flower', 30);
-	text(`Generation: ${ga.generation}`, 20, windowHeight*0.78, windowWidth * 0.3, windowHeight * 0.7)
-	text(`Best fitness: ${fit.bestFitness}`, 20, windowHeight*0.82, windowWidth * 0.3, windowHeight * 0.7);
-	text(`Average fitness: ${100*(fit.populationFitness.reduce(( p, c )=> p + c, 0) / fit.populationFitness.length)/TARGET.length}%`, 20, windowHeight*0.86, windowWidth * 0.3, windowHeight * 0.7);
-
+	text(`Generation: ${ga.generation}`, 20, windowHeight*0.76, windowWidth * 0.3, windowHeight * 0.7)
+	text(`Best fitness: ${fit.bestFitness}`, 20, windowHeight*0.80, windowWidth * 0.3, windowHeight * 0.7);
+	text(`Average fitness: ${100*(fit.populationFitness.reduce(( p, c )=> p + c, 0) / fit.populationFitness.length)/TARGET.length}%`, 20, windowHeight*0.84, windowWidth * 0.3, windowHeight * 0.7);
 }

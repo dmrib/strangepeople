@@ -113,13 +113,21 @@ class GeneticAlgorithm {
 
 let ga;
 let fit;
+let capturer;
+let btn;
+let counter = 1;
 
 function randomColor() {
 	return [random(0, 255), random(0, 255), random(0, 255)];
 }
 
 function setup() {
-	createCanvas(windowWidth, windowHeight);
+	frameRate(15);
+	createCanvas(windowWidth-200, windowHeight-50);
+	btn = document.createElement('button');
+	btn.textContent = "start recording";
+	document.body.appendChild(btn);
+	btn.onclick = record;
 	ga = new GeneticAlgorithm(TARGET, POPULATION_SIZE, MUTATION_RATE);
 }
 
@@ -131,11 +139,11 @@ function draw() {
 		ga.mate(fit.populationFitness)
 	}
 
-	background(random(10, 25));
+	background(25);
 
 	fill(...randomColor());
 	textFont('Gloria Hallelujah', 20);
-	text(ga.stringifyPopulation(), windowWidth*0.6, 20, windowWidth*0.6, windowHeight - 20);
+	text(ga.stringifyPopulation(), windowWidth*0.6 - 50, 20, windowWidth*0.6 -50, windowHeight - 60);
 
 	let bestPhrase = ga.population[fit.bestFitnesssPosition].join('')
 	bestPhrase = bestPhrase.slice(0, 7) + '\n' +
@@ -152,4 +160,27 @@ function draw() {
 	text(`Generation: ${ga.generation}`, 20, windowHeight*0.76, windowWidth * 0.3, windowHeight * 0.7)
 	text(`Best fitness: ${fit.bestFitness}`, 20, windowHeight*0.80, windowWidth * 0.3, windowHeight * 0.7);
 	text(`Average fitness: ${(100*(fit.populationFitness.reduce(( p, c )=> p + c, 0) / fit.populationFitness.length)/TARGET.length).toFixed(2)}%`, 20, windowHeight*0.84, windowWidth * 0.3, windowHeight * 0.7);
+
+	if(capturer){
+		capturer.capture(document.getElementById('defaultCanvas0'));
+		if(counter == 8){
+		  frameRate(0);
+		  btn.click();
+		}
+	}
 }
+
+function record() {
+	capturer = new CCapture({ format: 'webm' , framerate: 15} );
+	capturer.start();
+	btn.textContent = 'stop recording';
+
+	btn.onclick = e => {
+	  capturer.stop();
+	  capturer.save();
+	  capturer = null;
+
+	  btn.textContent = 'start recording';
+	  btn.onclick = record;
+	};
+  }

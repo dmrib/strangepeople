@@ -123,7 +123,7 @@ function randomColor() {
 }
 
 function preload() {
-	img = loadImage('assets/darwin.jpg');
+	img = loadImage('../assets/darwin.jpg');
   }
 
 function setup() {
